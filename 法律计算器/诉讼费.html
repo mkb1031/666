@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>诉讼费用计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>诉讼费用计算器</h1>
+        <div class="form-group">
+            <label for="caseType">选择案件类型:</label>
+            <select id="caseType" onchange="updateFields()">
+                <option value="1">一般财产类案件</option>
+                <option value="2">离婚案件</option>
+                <option value="3">财产分割</option>
+                <option value="4">侵权案件</option>
+                <option value="5">损害赔偿</option>
+                <option value="6">其他非财产案件</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="caseValueGroup" style="display:none;">
+            <label for="caseValue">请输入诉讼标的额:</label>
+            <input type="number" id="caseValue" placeholder="请输入金额" />
+        </div>
+
+        <div class="form-group" id="propertyGroup" style="display:none;">
+            <label for="propertyValue">请输入财产总额:</label>
+            <input type="number" id="propertyValue" placeholder="请输入金额" />
+        </div>
+
+        <div class="form-group" id="compensationGroup" style="display:none;">
+            <label for="compensationValue">请输入赔偿金额:</label>
+            <input type="number" id="compensationValue" placeholder="请输入金额" />
+        </div>
+
+        <button onclick="calculateFee()">计算费用</button>
+
+        <div class="result" id="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        function updateFields() {
+            const caseType = document.getElementById('caseType').value;
+            const caseValueGroup = document.getElementById('caseValueGroup');
+            const propertyGroup = document.getElementById('propertyGroup');
+            const compensationGroup = document.getElementById('compensationGroup');
+
+            caseValueGroup.style.display = 'none';
+            propertyGroup.style.display = 'none';
+            compensationGroup.style.display = 'none';
+
+            if (caseType == "1") {
+                caseValueGroup.style.display = 'block';
+            } else if (caseType == "3") {
+                propertyGroup.style.display = 'block';
+            } else if (caseType == "5") {
+                compensationGroup.style.display = 'block';
+            }
+        }
+
+        function calculateFee() {
+            const caseType = document.getElementById('caseType').value;
+            let fee = 0;
+            let value = 0;
+            let resultText = "";
+
+            if (caseType == "1") {
+                value = parseFloat(document.getElementById('caseValue').value);
+                if (isNaN(value) || value <= 0) {
+                    alert("请输入有效的金额");
+                    return;
+                }
+
+                if (value <= 10000) {
+                    fee = 50;
+                } else if (value <= 100000) {
+                    fee = value * 0.025 - 200;
+                } else if (value <= 200000) {
+                    fee = value * 0.02 + 300;
+                } else if (value <= 500000) {
+                    fee = value * 0.015 + 1300;
+                } else if (value <= 1000000) {
+                    fee = value * 0.01 + 3800;
+                } else if (value <= 2000000) {
+                    fee = value * 0.009 + 4800;
+                } else if (value <= 5000000) {
+                    fee = value * 0.008 + 6800;
+                } else if (value <= 10000000) {
+                    fee = value * 0.007 + 11800;
+                } else if (value <= 20000000) {
+                    fee = value * 0.006 + 21800;
+                } else {
+                    fee = value * 0.005 + 41800;
+                }
+
+                resultText = "一般财产类案件诉讼费为: " + fee.toFixed(2) + " 元";
+
+            } else if (caseType == "2") {
+                resultText = "离婚案件诉讼费为: 50元 至 300元";
+
+            } else if (caseType == "3") {
+                value = parseFloat(document.getElementById('propertyValue').value);
+                if (isNaN(value) || value <= 0) {
+                    alert("请输入有效的金额");
+                    return;
+                }
+
+                if (value <= 200000) {
+                    resultText = "财产分割诉讼费为: 不另行交纳";
+                } else {
+                    fee = (value - 200000) * 0.005;
+                    resultText = "财产分割诉讼费为: " + fee.toFixed(2) + " 元";
+                }
+
+            } else if (caseType == "4") {
+                resultText = "侵权案件诉讼费为: 100元 至 500元";
+
+            } else if (caseType == "5") {
+                value = parseFloat(document.getElementById('compensationValue').value);
+                if (isNaN(value) || value <= 0) {
+                    alert("请输入有效的金额");
+                    return;
+                }
+
+                if (value <= 50000) {
+                    resultText = "损害赔偿诉讼费为: 不另行交纳";
+                } else if (value <= 100000) {
+                    fee = (value - 50000) * 0.01;
+                    resultText = "损害赔偿诉讼费为: " + fee.toFixed(2) + " 元";
+                } else {
+                    fee = (50000 * 0.01) + ((value - 100000) * 0.005);
+                    resultText = "损害赔偿诉讼费为: " + fee.toFixed(2) + " 元";
+                }
+
+            } else if (caseType == "6") {
+                resultText = "其他非财产案件诉讼费为: 50元 至 100元";
+            }
+
+            document.getElementById('result').innerText = resultText;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保全费计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 5px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+
+        .result {
+            font-size: 18px;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>保全费计算器</h1>
+        <label for="amount">请输入被保全财产的金额：</label>
+        <input type="number" id="amount" placeholder="请输入金额（元）" min="0">
+        <button onclick="calculateFee()">计算保全费</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function calculateFee() {
+            var amount = parseFloat(document.getElementById('amount').value);
+            var fee = 0;
+
+            if (isNaN(amount) || amount < 0) {
+                document.getElementById('result').innerText = '请输入有效的金额';
+                return;
+            }
+
+            if (amount <= 1000) {
+                fee = 30;
+            } else if (amount > 1000 && amount <= 100000) {
+                fee = (amount - 1000) * 0.01 + 30;
+            } else if (amount > 100000) {
+                fee = (amount - 100000) * 0.005 + (100000 - 1000) * 0.01 + 30;
+            }
+
+            // 确保保全费不超过5000元
+            if (fee > 5000) {
+                fee = 5000;
+            }
+
+            document.getElementById('result').innerText = '计算后的保全费为：' + fee.toFixed(2) + '元';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>年休假计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        select{
+          width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+
+        .result {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>年休假计算器</h1>
+        <label for="region">选择已工作时长：</label>
+        <select id="region">
+            <option value="">请选择时长</option>
+            <option value="1">不满一年</option>
+            <option value="2">已满一年不满十年</option>
+            <option value="3">已满十年不满二十年</option>
+            <option value="4">已满二十年</option>
+ 
+        </select>
+
+        <button onclick="calculateLeave()">计算年休假天数</button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // 定义每个地区的年休假天数
+        const leaveData = {
+            "1": "无年休假",
+            "2": "5天",
+            "3": "10天",
+            "4": "15天",
+
+        };
+
+        // 计算年休假天数的函数
+        function calculateLeave() {
+            const region = document.getElementById("region").value;
+            const resultDiv = document.getElementById("result");
+
+            if (region) {
+                // 输出结果
+                resultDiv.textContent = `年休假天数为：${leaveData[region]}`;
+            } else {
+                resultDiv.textContent = "请选择一个工作时长进行计算";
+            }
+        }
+    </script>
+
+</body>
+</html>

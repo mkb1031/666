@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人身损害赔偿计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-container input[type="number"],
+        .form-container input[type="text"],
+        .form-container input[type="button"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-container input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        .form-container input[type="button"]:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e7f7e7;
+            border-radius: 4px;
+            border: 1px solid #c3e6c3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>人身损害赔偿计算器</h1>
+
+<div class="form-container">
+    <label for="diagnosis_fee">诊疗费：</label>
+    <input type="number" id="diagnosis_fee" placeholder="请输入诊疗费" />
+
+    <label for="medication_fee">医药费：</label>
+    <input type="number" id="medication_fee" placeholder="请输入医药费" />
+
+    <label for="hospital_fee">住院费：</label>
+    <input type="number" id="hospital_fee" placeholder="请输入住院费" />
+
+    <label for="other_medical_expenses">其他医用费用：</label>
+    <input type="number" id="other_medical_expenses" placeholder="请输入其他医用费用" />
+
+    <label for="hospital_days">住院天数：</label>
+    <input type="number" id="hospital_days" placeholder="请输入住院天数" />
+
+    <label for="daily_subsidy">国家机关一般工作人员出差伙食补助标准：</label>
+    <input type="number" id="daily_subsidy" placeholder="请输入伙食补助标准（元/天）" />
+
+    <label for="fixed_income">受害人固定收入：</label>
+    <input type="number" id="fixed_income" placeholder="请输入固定收入" />
+
+    <label for="work_days">误工天数：</label>
+    <input type="number" id="work_days" placeholder="请输入误工天数" />
+
+    <label for="caregiver_income">陪护人原收入：</label>
+    <input type="number" id="caregiver_income" placeholder="请输入陪护人收入" />
+
+    <label for="caregiver_days">陪护天数：</label>
+    <input type="number" id="caregiver_days" placeholder="请输入陪护天数" />
+
+    <label for="transportation_fee">交通费：</label>
+    <input type="number" id="transportation_fee" placeholder="请输入交通费用" />
+
+    <label for="accommodation_fee">住宿费：</label>
+    <input type="number" id="accommodation_fee" placeholder="请输入住宿费用" />
+
+    <label for="average_income">受诉法院所在地上一年度城镇居民人均可支配收入标准：</label>
+    <input type="number" id="average_income" placeholder="请输入年均收入" />
+
+    <label for="age">受害人年龄：</label>
+    <input type="number" id="age" placeholder="请输入受害人年龄" />
+
+    <input type="button" value="计算赔偿金额" onclick="calculateCompensation()">
+    
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    function calculateCompensation() {
+        // 获取输入值
+        let diagnosis_fee = parseFloat(document.getElementById("diagnosis_fee").value) || 0;
+        let medication_fee = parseFloat(document.getElementById("medication_fee").value) || 0;
+        let hospital_fee = parseFloat(document.getElementById("hospital_fee").value) || 0;
+        let other_medical_expenses = parseFloat(document.getElementById("other_medical_expenses").value) || 0;
+        let hospital_days = parseFloat(document.getElementById("hospital_days").value) || 0;
+        let daily_subsidy = parseFloat(document.getElementById("daily_subsidy").value) || 0;
+        let fixed_income = parseFloat(document.getElementById("fixed_income").value) || 0;
+        let work_days = parseFloat(document.getElementById("work_days").value) || 0;
+        let caregiver_income = parseFloat(document.getElementById("caregiver_income").value) || 0;
+        let caregiver_days = parseFloat(document.getElementById("caregiver_days").value) || 0;
+        let transportation_fee = parseFloat(document.getElementById("transportation_fee").value) || 0;
+        let accommodation_fee = parseFloat(document.getElementById("accommodation_fee").value) || 0;
+        let average_income = parseFloat(document.getElementById("average_income").value) || 0;
+        let age = parseInt(document.getElementById("age").value) || 0;
+        
+        // 医疗费赔偿
+        let medical_compensation = diagnosis_fee + medication_fee + hospital_fee + other_medical_expenses;
+
+        // 住院伙食补助费赔偿
+        let meal_subsidy = daily_subsidy * hospital_days;
+
+        // 误工费赔偿
+        let work_compensation = fixed_income * work_days;
+
+        // 陪护费赔偿
+        let caregiver_compensation = caregiver_income * caregiver_days;
+
+        // 交通费赔偿
+        let transportation_compensation = transportation_fee;
+
+        // 住宿费赔偿
+        let accommodation_compensation = accommodation_fee;
+
+        // 残疾赔偿金（假设年龄为30岁，伤残赔偿指数为1）
+        let disability_compensation = average_income * 20 * 1;
+
+        // 死亡赔偿金（假设年龄为30岁，伤残赔偿指数为1）
+        let death_compensation = average_income * 20;
+
+        // 显示结果
+        let resultHTML = `
+            <h3>计算结果</h3>
+            <p>医疗费赔偿金额: ¥${medical_compensation.toFixed(2)}</p>
+            <p>住院伙食补助费赔偿金额: ¥${meal_subsidy.toFixed(2)}</p>
+            <p>误工费赔偿金额: ¥${work_compensation.toFixed(2)}</p>
+            <p>陪护费赔偿金额: ¥${caregiver_compensation.toFixed(2)}</p>
+            <p>交通费赔偿金额: ¥${transportation_compensation.toFixed(2)}</p>
+            <p>住宿费赔偿金额: ¥${accommodation_compensation.toFixed(2)}</p>
+            <p>残疾赔偿金: ¥${disability_compensation.toFixed(2)}</p>
+            <p>死亡赔偿金: ¥${death_compensation.toFixed(2)}</p>
+        `;
+
+        document.getElementById("result").innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>时间差计算器</title>
+  <style>
+    body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+    }
+
+    .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    label {
+      font-size: 30px;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    input {
+      width: 95%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>时间计算器</h1>
+  
+  <!-- 开始时间 -->
+  <label for="startDate">选择开始日期:</label>
+  <input type="date" id="startDate" required>
+
+  <!-- 结束时间 -->
+  <label for="endDate">选择结束日期:</label>
+  <input type="date" id="endDate"  required>
+
+  <!-- 计算按钮 -->
+  <button onclick="calculateTimeDifference()">计算时间差</button>
+
+  <!-- 结果显示区域 -->
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  function calculateTimeDifference() {
+    // 获取选择的开始日期和结束日期
+    const startDate = new Date(document.getElementById("startDate").value);
+    const endDate = new Date(document.getElementById("endDate").value);
+
+    // 判断用户是否选择了有效的日期
+    if (isNaN(startDate) || isNaN(endDate)) {
+      document.getElementById("result").innerText = "请选择有效的开始日期和结束日期！";
+      return;
+    }
+
+    // 如果结束日期早于开始日期，则交换日期
+    if (endDate < startDate) {
+      const temp = startDate;
+      startDate = endDate;
+      endDate = temp;
+    }
+
+    // 计算时间差
+    const diffTime = endDate - startDate;
+    const diffDays = diffTime / (1000 * 3600 * 24);  // 转换为天数
+
+    // 获取年、月、天数
+    const years = Math.floor(diffDays / 365);
+    const months = Math.floor((diffDays % 365) / 30);
+    const days = Math.floor(diffDays % 30);
+
+    // 生成输出结果
+    let resultText = "";
+    if (years > 0) {
+      resultText = `${years}年 ${months}个月（共计 ${diffDays} 天）`;
+    } else if (months > 0) {
+      resultText = `${months}个月（共计 ${diffDays} 天）`;
+    } else {
+      resultText = `共计 ${diffDays} 天`;
+    }
+
+    // 显示结果
+    document.getElementById("result").innerText = resultText;
+  }
+</script>
+
+</body>
+</html>

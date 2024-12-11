@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陪产假计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        select{
+          width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+
+        .result {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>陪产假计算器</h1>
+        <label for="region">选择地区：</label>
+        <select id="region">
+            <option value="">请选择地区</option>
+            <option value="beijing">北京</option>
+            <option value="tianjin">天津</option>
+            <option value="hebei">河北</option>
+            <option value="shanxi">山西</option>
+            <option value="neimenggu">内蒙古</option>
+            <option value="liaoning">辽宁</option>
+            <option value="jilin">吉林</option>
+            <option value="heilongjiang">黑龙江</option>
+            <option value="shanghai">上海</option>
+            <option value="jiangsu">江苏</option>
+            <option value="zhejiang">浙江</option>
+            <option value="anhui">安徽</option>
+            <option value="fujian">福建</option>
+            <option value="jiangxi">江西</option>
+            <option value="shandong">山东</option>
+            <option value="henan">河南</option>
+            <option value="hubei">湖北</option>
+            <option value="hunan">湖南</option>
+            <option value="guangdong">广东</option>
+            <option value="guangxi">广西</option>
+            <option value="hainan">海南</option>
+            <option value="chongqing">重庆</option>
+            <option value="sichuan">四川</option>
+            <option value="guizhou">贵州</option>
+            <option value="yunnan">云南</option>
+            <option value="xizang">西藏</option>
+            <option value="shanxi2">陕西</option>
+            <option value="gansu">甘肃</option>
+            <option value="qinghai">青海</option>
+            <option value="ningxia">宁夏</option>
+            <option value="xinjiang">新疆</option>
+        </select>
+
+        <button onclick="calculateLeave()">计算陪产假天数</button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // 定义每个地区的陪产假天数
+        const leaveData = {
+            "beijing": "15天",
+            "tianjin": "15天",
+            "hebei": "15天",
+            "shanxi": "15天",
+            "neimenggu": "25天",
+            "liaoning": "20天",
+            "jilin": "25天",
+            "heilongjiang": "15天",
+            "shanghai": "10天",
+            "jiangsu": "15天",
+            "zhejiang": "15天",
+            "anhui": "30天",
+            "fujian": "15天",
+            "jiangxi": "30天",
+            "shandong": "15天",
+            "henan": "30天",
+            "hubei": "15天",
+            "hunan": "20天",
+            "guangdong": "15天",
+            "guangxi": "25天",
+            "hainan": "15天",
+            "chongqing": "20天",
+            "sichuan": "20天",
+            "guizhou": "15天",
+            "yunnan": "30天",
+            "xizang": "30天",
+            "shanxi2": "15天（生育三孩增加10天）",
+            "gansu": "30天",
+            "qinghai": "15天",
+            "ningxia": "25天",
+            "xinjiang": "15天"
+        };
+
+        // 计算陪产假天数的函数
+        function calculateLeave() {
+            const region = document.getElementById("region").value;
+            const resultDiv = document.getElementById("result");
+
+            if (region) {
+                // 输出结果
+                resultDiv.textContent = `您所在地区的陪产假天数为：${leaveData[region]}`;
+            } else {
+                resultDiv.textContent = "请选择一个地区进行计算";
+            }
+        }
+    </script>
+
+</body>
+</html>

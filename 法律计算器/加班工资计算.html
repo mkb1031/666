@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加班工资计算器</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            margin-top: 10px;
+        }
+
+        select{
+          width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        #salary{
+          width: 96%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .checkbox{
+          width: 5%;
+        }
+
+        .number{
+          width: 31%;
+          height: 30px;
+          padding: 3px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            display: none;
+        }
+
+        .result h3 {
+            margin: 0;
+        }
+
+        .btn {
+            padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <h1>加班工资计算器</h1>
+      <div class="form-group">
+          <label for="work-system">请选择工时制度：</label><br>
+          <select id="work-system">
+              <option value="standard">标准工时制度</option>
+              <option value="comprehensive">综合工时制度</option>
+              <option value="irregular">不定时工时制度</option>
+          </select>
+      </div>
+
+      <div id="salary-input" class="form-group">
+          <label for="salary">请输入月工资：</label><br>
+          <input type="number" id="salary" placeholder="例如：5000" />
+      </div>
+
+      <div id="overtime-type" class="form-group">
+          <label for="workday">选择加班时间：（可多选）</label><br>
+          <input class="checkbox" type="checkbox" id="workday" /> 工作日
+          <input class="checkbox" type="checkbox" id="holiday" /> 休息日
+          <input class="checkbox" type="checkbox" id="legal-holiday" /> 法定节假日
+      </div>
+
+      <div id="overtime-days" class="form-group">
+          <label for="workday-hours">加班时数：</label><br>
+          <input class="number" type="number" id="workday-hours" placeholder="工作日加班时数" disabled />
+          <input class="number" type="number" id="holiday-hours" placeholder="休息日加班时数" disabled />
+          <input class="number" type="number" id="legal-holiday-hours" placeholder="法定节假日加班时数" disabled />
+      </div>
+
+      <button class="btn" onclick="calculateOvertime()">计算加班工资</button>
+
+      <div id="result" class="result">
+          <h3>计算结果：</h3>
+          <p id="calculated-wage">加班工资将显示在这里。</p>
+      </div>
+  
+    <div id="error-message" class="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        // 根据选择的工时制度启用相关字段
+        document.getElementById('work-system').addEventListener('change', function() {
+            var system = this.value;
+            var salaryInput = document.getElementById('salary-input');
+            var overtimeType = document.getElementById('overtime-type');
+            var overtimeDays = document.getElementById('overtime-days');
+            var workdayHours = document.getElementById('workday-hours');
+            var holidayHours = document.getElementById('holiday-hours');
+            var legalHolidayHours = document.getElementById('legal-holiday-hours');
+            var errorMessage = document.getElementById('error-message');
+            
+            // 清空错误信息
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
+
+            // 重置输入框
+            workdayHours.value = '';
+            holidayHours.value = '';
+            legalHolidayHours.value = '';
+
+            // 启用/禁用字段
+            if (system === 'irregular') {
+                salaryInput.style.display = 'none';
+                overtimeType.style.display = 'none';
+                overtimeDays.style.display = 'none';
+            } else {
+                salaryInput.style.display = 'block';
+                overtimeType.style.display = 'block';
+                overtimeDays.style.display = 'block';
+                workdayHours.disabled = false;
+                holidayHours.disabled = false;
+                legalHolidayHours.disabled = false;
+            }
+        });
+
+        function calculateOvertime() {
+            var system = document.getElementById('work-system').value;
+            var salary = parseFloat(document.getElementById('salary').value);
+            var workdayChecked = document.getElementById('workday').checked;
+            var holidayChecked = document.getElementById('holiday').checked;
+            var legalHolidayChecked = document.getElementById('legal-holiday').checked;
+            var workdayHours = parseFloat(document.getElementById('workday-hours').value) || 0;
+            var holidayHours = parseFloat(document.getElementById('holiday-hours').value) || 0;
+            var legalHolidayHours = parseFloat(document.getElementById('legal-holiday-hours').value) || 0;
+
+            var resultDiv = document.getElementById('result');
+            var wageOutput = document.getElementById('calculated-wage');
+            var errorMessage = document.getElementById('error-message');
+            
+            // 清空之前的结果
+            wageOutput.textContent = '';
+            resultDiv.style.display = 'none';
+            errorMessage.style.display = 'none';
+
+            // 校验输入
+            if (system !== 'irregular' && isNaN(salary) || salary <= 0) {
+                errorMessage.textContent = '请输入有效的月工资。';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (system !== 'irregular' && !workdayChecked && !holidayChecked && !legalHolidayChecked) {
+                errorMessage.textContent = '请选择至少一种加班类型。';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // 计算加班工资
+            var wage = 0;
+            var dailySalary = salary / 21.75 / 8;
+
+            if (system === 'standard' || system === 'comprehensive') {
+                if (workdayChecked) {
+                    wage += dailySalary * workdayHours * 1.5;
+                }
+                if (holidayChecked) {
+                    wage += dailySalary * holidayHours * 2;
+                }
+                if (legalHolidayChecked) {
+                    wage += dailySalary * legalHolidayHours * 3;
+                }
+            } else if (system === 'irregular') {
+                wageOutput.textContent = '不定时工时制度不可以主张加班费。';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            wageOutput.textContent = '加班工资为：￥' + wage.toFixed(2);
+            resultDiv.style.display = 'block';
+        }
+
+        // 初始设置
+        window.onload = function() {
+            document.getElementById('work-system').dispatchEvent(new Event('change'));
+        };
+    </script>
+</body>
+</html>

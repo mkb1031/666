@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>刑期折抵计算</title>
+  <style>
+    body {
+          font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"],
+    select,
+    input[type="date"] {
+      width: 96%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>刑期折抵计算</h1>
+
+  <div class="form-group">
+    <label for="sentence-type">请选择刑罚类型：</label>
+    <select id="sentence-type">
+      <option value="管制">管制</option>
+      <option value="拘役">拘役</option>
+      <option value="有期徒刑">有期徒刑</option>
+    </select>
+  </div>
+
+  <div class="form-group" id="sentence-month-group">
+    <label for="sentence-month">刑期（月）：</label>
+    <input type="text" id="sentence-month" placeholder="请输入刑期（单位：月）" />
+  </div>
+
+  <div class="form-group" id="sentence-years-group" style="display:none;">
+    <label for="sentence-years">刑期（年）：</label>
+    <input type="text" id="sentence-years" placeholder="请输入刑期（单位：年）" />
+  </div>
+
+  <div class="form-group" id="sentence-months-group" style="display:none;">
+    <label for="sentence-months">刑期（个月）：</label>
+    <input type="text" id="sentence-months" placeholder="请输入刑期（单位：月）" />
+  </div>
+
+  <div class="form-group">
+    <label for="execution-date">判决执行日期：</label>
+    <input type="date" id="execution-date" />
+  </div>
+
+  <div class="form-group">
+    <label for="precondition">判决前的情形：</label>
+    <select id="precondition">
+      <option value="无">无</option>
+      <option value="刑事拘留、逮捕">因同一犯罪行为被刑事拘留、逮捕</option>
+      <option value="指定居所监视居住">因同一犯罪行为被采取指定居所的监视居住</option>
+      <option value="行政拘留、海关扣留">因同一犯罪行为先被采取行政拘留、海关扣留，后该行为被刑事审判</option>
+    </select>
+  </div>
+
+  <div class="form-group" id="precondition-days-group" style="display: none;">
+    <label for="precondition-days">输入判决前被羁押或监视居住的天数：</label>
+    <input type="text" id="precondition-days" placeholder="请输入天数" />
+  </div>
+
+  <div class="form-group" id="custody-group" style="display: none;">
+    <label for="custody-days">输入判决前被羁押的天数：</label>
+    <input type="text" id="custody-days" placeholder="请输入天数" />
+  </div>
+
+  <div class="form-group" id="monitoring-group" style="display: none;">
+    <label for="monitoring-days">输入判决前被监视居住的天数：</label>
+    <input type="text" id="monitoring-days" placeholder="请输入天数" />
+  </div>
+
+  <div class="form-group" id="detention-group" style="display: none;">
+    <label for="detention-days">输入判决前被海关扣留的天数：</label>
+    <input type="text" id="detention-days" placeholder="请输入天数" />
+  </div>
+
+  <button onclick="calculateSentence()">计算刑期结束时间</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  document.getElementById('sentence-type').addEventListener('change', updateFields);
+  document.getElementById('precondition').addEventListener('change', updateFields);
+
+  function updateFields() {
+    const sentenceType = document.getElementById('sentence-type').value;
+    const precondition = document.getElementById('precondition').value;
+    const sentenceYearGroup = document.getElementById('sentence-years-group');
+    const sentenceMonthGroup = document.getElementById('sentence-months-group');
+    const sentenceMonthGroupDefault = document.getElementById('sentence-month-group');
+    
+    // Toggle visibility of sentence months and years based on sentence type
+    if (sentenceType === '有期徒刑') {
+      sentenceYearGroup.style.display = 'block';
+      sentenceMonthGroup.style.display = 'block';
+      sentenceMonthGroupDefault.style.display = 'none';
+    } else {
+      sentenceYearGroup.style.display = 'none';
+      sentenceMonthGroup.style.display = 'none';
+      sentenceMonthGroupDefault.style.display = 'block';
+    }
+    
+    const preconditionDaysGroup = document.getElementById('precondition-days-group');
+    const custodyGroup = document.getElementById('custody-group');
+    const monitoringGroup = document.getElementById('monitoring-group');
+    const detentionGroup = document.getElementById('detention-group');
+    
+    // Show or hide input fields for precondition based on user selection
+    if (precondition === "刑事拘留、逮捕") {
+      preconditionDaysGroup.style.display = 'none';
+      custodyGroup.style.display = 'block';
+      monitoringGroup.style.display = 'none';
+      detentionGroup.style.display = 'none';
+    } else if (precondition === "指定居所监视居住") {
+      preconditionDaysGroup.style.display = 'none';
+      custodyGroup.style.display = 'none';
+      monitoringGroup.style.display = 'block';
+      detentionGroup.style.display = 'none';
+    } else if (precondition === "行政拘留、海关扣留") {
+      preconditionDaysGroup.style.display = 'none';
+      custodyGroup.style.display = 'none';
+      monitoringGroup.style.display = 'none';
+      detentionGroup.style.display = 'block';
+    } else {
+      preconditionDaysGroup.style.display = 'none';
+      custodyGroup.style.display = 'none';
+      monitoringGroup.style.display = 'none';
+      detentionGroup.style.display = 'none';
+    }
+  }
+
+  function calculateSentence() {
+    const sentenceType = document.getElementById('sentence-type').value;
+    const executionDate = new Date(document.getElementById('execution-date').value);
+    const precondition = document.getElementById('precondition').value;
+    let preconditionDays = 0;
+    
+    // 根据判决前的情形获取羁押、监视居住、海关扣留的天数
+    if (precondition === '刑事拘留、逮捕') {
+      preconditionDays = parseInt(document.getElementById('custody-days').value) || 0;
+    } else if (precondition === '指定居所监视居住') {
+      preconditionDays = parseInt(document.getElementById('monitoring-days').value) || 0;
+    } else if (precondition === '行政拘留、海关扣留') {
+      preconditionDays = parseInt(document.getElementById('detention-days').value) || 0;
+    } else {
+      preconditionDays = parseInt(document.getElementById('precondition-days').value) || 0;
+    }
+
+    const sentenceMonthInput = document.getElementById('sentence-month');
+    const sentenceMonthsInput = document.getElementById('sentence-months');
+    const sentenceYearInput = document.getElementById('sentence-years');
+    let sentenceMonths = 0;
+
+    // 根据用户输入的刑期计算总月数
+    if (sentenceType === '有期徒刑') {
+      const years = parseInt(sentenceYearInput.value) || 0;
+      const months = parseInt(sentenceMonthsInput.value) || 0;
+      sentenceMonths = years * 12 + months;
+    } else {
+      sentenceMonths = parseInt(sentenceMonthInput.value) || 0;
+    }
+
+    if (isNaN(sentenceMonths) || sentenceMonths <= 0) {
+      document.getElementById('result').innerHTML = "<span class='error'>请输入有效的刑期（月）！</span>";
+      return;
+    }
+
+    // 根据刑罚类型和判决前的情形，折抵刑期
+    let daysToDeduct = 0;
+    if (sentenceType === '管制') {
+      if (precondition === '刑事拘留、逮捕') {
+        daysToDeduct = preconditionDays * 2;
+      } else if (precondition === '指定居所监视居住') {
+        daysToDeduct = preconditionDays;
+      } else if (precondition === '行政拘留、海关扣留') {
+        daysToDeduct = preconditionDays;
+      }
+    } else if (sentenceType === '拘役') {
+      if (precondition === '刑事拘留、逮捕') {
+        daysToDeduct = preconditionDays;
+      } else if (precondition === '指定居所监视居住') {
+        daysToDeduct = Math.floor(preconditionDays / 2);
+      } else if (precondition === '行政拘留、海关扣留') {
+        daysToDeduct = preconditionDays;
+      }
+    } else if (sentenceType === '有期徒刑') {
+      if (precondition === '刑事拘留、逮捕') {
+        daysToDeduct = preconditionDays;
+      } else if (precondition === '指定居所监视居住') {
+        daysToDeduct = Math.floor(preconditionDays / 2);
+      } else if (precondition === '行政拘留、海关扣留') {
+        daysToDeduct = preconditionDays;
+      }
+    }
+
+    // 计算最终刑期
+    let totalDaysToDeduct = daysToDeduct; // 总的折抵天数
+    let remainingMonths = sentenceMonths * 30 - totalDaysToDeduct; // 计算剩余天数
+
+    // 计算剩余的月数和日期
+    let finalMonth = Math.floor(remainingMonths / 30); // 剩余月数
+    let finalDay = remainingMonths % 30; // 剩余天数
+
+    // 根据执行日期计算结束时间
+    let endDate = new Date(executionDate);
+    endDate.setMonth(endDate.getMonth() + finalMonth);
+    endDate.setDate(endDate.getDate() + finalDay);
+
+    // 显示结果
+    document.getElementById('result').innerHTML = `刑期结束日期：${endDate.toLocaleDateString()}`;
+  }
+</script>
+
+</body>
+</html>

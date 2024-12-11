@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>利息计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>利息计算器</h1>
+
+        <div class="form-group">
+            <label for="principal">请输入本金 (元):</label>
+            <input type="number" id="principal" placeholder="输入本金" required>
+        </div>
+
+        <div class="form-group">
+            <label for="rateType">选择利息方式:</label>
+            <select id="rateType" onchange="updateTimeLabel()">
+                <option value="day">日利率</option>
+                <option value="month">月利率</option>
+                <option value="year">年利率</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="interestRate">请输入利率 (%):</label>
+            <input type="number" id="interestRate" placeholder="输入利率" required>
+        </div>
+
+        <div class="form-group">
+            <label for="timePeriod" id="timeLabel">请输入时间 (天):</label>
+            <input type="number" id="timePeriod" placeholder="输入时间" required>
+        </div>
+
+        <button class="btn" onclick="calculateInterest()">计算利息</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        // 根据选择的利息方式更新时间输入框的标签
+        function updateTimeLabel() {
+            var rateType = document.getElementById('rateType').value;
+            var timeLabel = document.getElementById('timeLabel');
+
+            if (rateType === 'day') {
+                timeLabel.textContent = '请输入时间 (天):';
+            } else if (rateType === 'month') {
+                timeLabel.textContent = '请输入时间 (月):';
+            } else if (rateType === 'year') {
+                timeLabel.textContent = '请输入时间 (年):';
+            }
+        }
+
+        // 计算利息的函数
+        function calculateInterest() {
+            var principal = parseFloat(document.getElementById('principal').value);
+            var rateType = document.getElementById('rateType').value;
+            var interestRate = parseFloat(document.getElementById('interestRate').value);
+            var timePeriod = parseFloat(document.getElementById('timePeriod').value);
+
+            // 检查输入的值是否有效
+            if (isNaN(principal) || isNaN(interestRate) || isNaN(timePeriod)) {
+                document.getElementById('result').textContent = '请输入有效的值。';
+                return;
+            }
+
+            var interest = 0;
+            if (rateType === 'day') {
+                interest = principal * (interestRate / 100) * timePeriod;
+            } else if (rateType === 'month') {
+                interest = principal * (interestRate / 100) * timePeriod;
+            } else if (rateType === 'year') {
+                interest = principal * (interestRate / 100) * timePeriod;
+            }
+
+            var totalAmount = principal + interest;
+            document.getElementById('result').textContent = '利息: ' + interest.toFixed(2) + ' 元, 总金额: ' + totalAmount.toFixed(2) + ' 元';
+        }
+    </script>
+
+</body>
+</html>
+

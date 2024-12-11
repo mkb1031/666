@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>离职经济补偿计算器</title>
+  <style>
+    body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+    label {
+      font-size: 14px;
+      margin-right: 10px;
+    }
+    input, select, textarea {
+      font-size: 14px;
+      padding: 5px;
+      margin: 5px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+    .section label {
+      display: block;
+    }
+    .hidden {
+      display: none;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    input#entryDate{
+      width: 96%;
+    }
+
+    input#exitDate{
+      width: 96%;
+    }
+
+    input#avgSalary{
+      width: 96%;
+    }
+
+    input#socialAvgSalary{
+      width: 96%;
+    }
+
+    select{
+      width: 98%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>离职经济补偿计算器</h1>
+
+    <!-- 入职和离职时间 -->
+    <div class="section">
+      <label for="entryDate">入职时间：</label>
+      <input type="date" id="entryDate" required>
+    </div>
+    <div class="section">
+      <label for="exitDate">离职时间：</label>
+      <input type="date" id="exitDate" required>
+    </div>
+
+    <!-- 月平均工资 -->
+    <div class="section">
+      <label for="avgSalary">离职前一年的月平均工资：</label>
+      <input type="number" id="avgSalary" placeholder="请输入月平均工资" required>
+    </div>
+
+    <!-- 所在地区社会月平均工资 -->
+    <div class="section">
+      <label for="socialAvgSalary">所在地区社会月平均工资：</label>
+      <input type="number" id="socialAvgSalary" placeholder="请输入社会月平均工资" required>
+      <a href="https://web.laofa.com/calculator/#/retrieval?t=avg&p=110000&c=110100" target="_blank">点击查询所在地区社平工资</a><br>
+    </div>
+
+    <!-- 离职原因 -->
+    <div class="section">
+      <label for="reason">选择离职原因：</label>
+      <select id="reason" onchange="handleReasonChange()">
+        <option value="">请选择离职原因</option>
+        <option value="1">本人辞职或解除劳动合同</option>
+        <option value="2">单位辞退或解除劳动合同</option>
+        <option value="3">单位原因</option>
+      </select>
+    </div>
+
+    <!-- 本人辞职或解除劳动合同的情形 -->
+    <div id="reason1" class="hidden">
+      <label>请选择具体情形：</label><br>
+      <label><input type="checkbox" id="reason1_1"> 单位未依法为我缴纳社会保险费</label><br>
+      <label><input type="checkbox" id="reason1_2"> 单位未及时足额支付我劳动报酬</label><br>
+      <label><input type="checkbox" id="reason1_3"> 单位违章指挥、强令冒险作业危及我的人身安全</label><br>
+      <label><input type="checkbox" id="reason1_4"> 单位以暴力、威胁或非法限制人身自由的手段强迫我劳动</label><br>
+      <label><input type="checkbox" id="reason1_5"> 单位的规章制度违反法律、法规的规定，损害我的合法权益</label><br>
+      <label><input type="checkbox" id="reason1_6"> 单位未按照劳动合同约定为我提供劳动保护或劳动条件</label><br>
+      <label><input type="checkbox" id="reason1_7"> 单位以欺诈、胁迫的手段或趁人之危，使我在违背真实意愿下签订劳动合同</label><br>
+      <label><input type="checkbox" id="reason1_8"> 无以上情形</label><br>
+    </div>
+
+    <!-- 单位辞退或解除劳动合同的情形 -->
+    <div id="reason2" class="hidden">
+      <label>请选择具体情形：</label><br>
+      <label><input type="radio" name="reason2" id="reason2_1"> 在孕期、产期、哺乳期</label><br>
+      <label><input type="radio" name="reason2" id="reason2_2"> 患病或非因工负伤，在规定的医疗期内</label><br>
+      <label><input type="radio" name="reason2" id="reason2_3"> 疑似职业病还处于诊断或医学观察期间</label><br>
+      <label><input type="radio" name="reason2" id="reason2_4"> 从事解除职业病危害作业还未进行离岗前职业健康检查</label><br>
+      <label><input type="radio" name="reason2" id="reason2_5"> 在本单位连续工作满十五年，且距离法定退休年龄不足五年</label><br>
+      <label><input type="radio" name="reason2" id="reason2_6"> 在本单位患职业病或因工负伤并被确认丧失或部分丧失劳动能力</label><br>
+      <label><input type="radio" name="reason2" id="reason2_7"> 无以上情形</label><br>
+    </div>
+
+    <!-- 单位原因的情形 -->
+    <div id="reason3" class="hidden">
+      <label>请选择具体情形：</label><br>
+      <label><input type="radio" name="reason3" id="reason3_1"> 单位被依法宣告破产</label><br>
+      <label><input type="radio" name="reason3" id="reason3_2"> 单位被吊销营业执照</label><br>
+      <label><input type="radio" name="reason3" id="reason3_3"> 单位被责令关闭</label><br>
+      <label><input type="radio" name="reason3" id="reason3_4"> 单位被撤销</label><br>
+      <label><input type="radio" name="reason3" id="reason3_5"> 单位决定提前解散</label><br>
+      <label><input type="radio" name="reason3" id="reason3_6"> 单位不再继续经营</label><br>
+      <label><input type="radio" name="reason3" id="reason3_7"> 单位裁员</label><br>
+      <label><input type="radio" name="reason3" id="reason3_8"> 无以上情形</label><br>
+    </div>
+
+    <div class="section">
+      <button onclick="calculateCompensation()">计算离职补偿</button>
+    </div>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function handleReasonChange() {
+      const reason = document.getElementById('reason').value;
+      document.getElementById('reason1').classList.add('hidden');
+      document.getElementById('reason2').classList.add('hidden');
+      document.getElementById('reason3').classList.add('hidden');
+
+      if (reason === '1') {
+        document.getElementById('reason1').classList.remove('hidden');
+      } else if (reason === '2') {
+        document.getElementById('reason2').classList.remove('hidden');
+      } else if (reason === '3') {
+        document.getElementById('reason3').classList.remove('hidden');
+      }
+    }
+
+    function calculateCompensation() {
+      const entryDate = new Date(document.getElementById('entryDate').value);
+      const exitDate = new Date(document.getElementById('exitDate').value);
+      const avgSalary = parseFloat(document.getElementById('avgSalary').value);
+      const socialAvgSalary = parseFloat(document.getElementById('socialAvgSalary').value);
+      const reason = document.getElementById('reason').value;
+
+      if (!entryDate || !exitDate || !avgSalary || !socialAvgSalary || !reason) {
+        alert("请完整填写所有信息！");
+        return;
+      }
+
+      // 计算工作时长
+      const workDuration = (exitDate - entryDate) / (1000 * 60 * 60 * 24 * 365);
+      const monthsWorked = workDuration * 12;
+      let compensation = 0;
+
+      // 判断离职原因
+      let validReason = false;
+
+      if (reason === '1') {
+        validReason = document.getElementById('reason1_1').checked ||
+                      document.getElementById('reason1_2').checked ||
+                      document.getElementById('reason1_3').checked ||
+                      document.getElementById('reason1_4').checked ||
+                      document.getElementById('reason1_5').checked ||
+                      document.getElementById('reason1_6').checked ||
+                      document.getElementById('reason1_7').checked;
+
+        if (validReason) {
+          // 根据工作时长计算补偿
+          if (monthsWorked >= 12) {
+            compensation = avgSalary;
+          } else if (monthsWorked >= 6) {
+            compensation = avgSalary;
+          } else {
+            compensation = avgSalary / 2;
+          }
+        }
+      } else if (reason === '2') {
+        // 单位辞退或解除劳动合同的情形
+        const reason2Checked = document.querySelector('input[name="reason2"]:checked');
+        if (reason2Checked && reason2Checked.id !== 'reason2_7') {
+          if (monthsWorked >= 12) {
+            compensation = avgSalary;
+          } else if (monthsWorked >= 6) {
+            compensation = avgSalary;
+          } else {
+            compensation = avgSalary / 2;
+          }
+        }
+      } else if (reason === '3') {
+        // 单位原因
+        const reason3Checked = document.querySelector('input[name="reason3"]:checked');
+        if (reason3Checked && reason3Checked.id !== 'reason3_8') {
+          if (monthsWorked >= 12) {
+            compensation = avgSalary;
+          } else if (monthsWorked >= 6) {
+            compensation = avgSalary;
+          } else {
+            compensation = avgSalary / 2;
+          }
+        }
+      }
+
+      // 如果选择了"无以上情形"，则不支付补偿金
+      if (reason === '1' && document.getElementById('reason1_8').checked) {
+        compensation = 0;
+      } else if (reason === '2' && document.getElementById('reason2_7').checked) {
+        compensation = 0;
+      } else if (reason === '3' && document.getElementById('reason3_8').checked) {
+        compensation = 0;
+      }
+
+      // 如果月平均工资高于社会月平均工资，按3倍工资计算补偿
+      if (avgSalary > socialAvgSalary) {
+        compensation = Math.min(compensation * 3); // 最多12个月
+      }
+
+      // 最终补偿金额
+      compensation = Math.min(compensation, avgSalary * 12) - avgSalary ; // 最终补偿年限不超过12年
+
+      // 输出计算结果
+      document.getElementById('result').textContent = `计算的离职补偿金额为：￥${compensation.toFixed(2)}元`;
+    }
+  </script>
+</body>
+</html>
